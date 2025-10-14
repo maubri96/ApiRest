@@ -1,0 +1,19 @@
+{
+  "name": "node",
+  "version": "1.0.0",
+  "description": "Api",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maubri96/ApiRest.git"
+  },
+  "author": "Mauricio R. Briceño",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/maubri96/ApiRest/issues"
+  },
+  "homepage": "https://github.com/maubri96/ApiRest#readme"
+}
