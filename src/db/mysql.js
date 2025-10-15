@@ -43,19 +43,73 @@ function todos(tabla){
 }
 
 
-function uno(tabla, id){
+function uno(tabla, id) {
+  return new Promise((resolve, reject) => {
+    if (!connection) return reject('No hay conexión a la base de datos');
+    if (!id) return reject('ID no proporcionado');
 
+    const sql = `SELECT * FROM ${tabla} WHERE id = ${id}`; // ?? protege el nombre de la tabla
+    connection.query(sql, [tabla, id], (error, result) => {
+      if (error) return reject(error);
+      resolve(result);
+    });
+  });
 }
 
-function insertar(tabla, data){
 
+function insertar(tabla, data) {
+  return new Promise((resolve, reject) => {
+    if (!connection) return reject('No hay conexión a la base de datos');
+    if (!data) return reject('No se proporcionaron datos');
+
+    const sql = `INSERT INTO ?? SET ?`;
+    connection.query(sql, [tabla, data], (error, result) => {
+      if (error) return reject(error);
+      resolve(result);
+    });
+  });
 }
 
-function eliminar(tabla, id){
 
-}module.exports = {
+function actualizar(tabla, data) {
+  return new Promise((resolve, reject) => {
+    if (!connection) return reject('No hay conexión a la base de datos');
+    if (!data || !data.id) return reject('ID no proporcionado');
+
+    const sql = `UPDATE ?? SET ? WHERE id = ?`;
+    connection.query(sql, [tabla, data, data.id], (error, result) => {
+      if (error) return reject(error);
+      resolve(result);
+    });
+  });
+}
+
+
+function agregar(tabla, data) {
+  if (!data.id || data.id === 0) {
+    return insertar(tabla, data);
+  } else {
+    return actualizar(tabla, data);
+  }
+}
+
+function eliminar(tabla, data) {
+  return new Promise((resolve, reject) => {
+    if (!connection) return reject('No hay conexión a la base de datos');
+    if (!data || !data.id) return reject('ID no proporcionado');
+
+    const sql = `DELETE FROM ?? WHERE id = ?`;
+    connection.query(sql, [tabla, data.id], (error, result) => {
+      if (error) return reject(error);
+      resolve(result);
+    });
+  });
+}
+
+
+module.exports = {
     todos,
     uno,
-    insertar,
+    agregar,
     eliminar
 }
