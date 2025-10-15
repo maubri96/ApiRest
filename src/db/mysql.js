@@ -57,41 +57,25 @@ function uno(tabla, id) {
 }
 
 
-function insertar(tabla, data) {
-  return new Promise((resolve, reject) => {
-    if (!connection) return reject('No hay conexión a la base de datos');
-    if (!data) return reject('No se proporcionaron datos');
-
-    const sql = `INSERT INTO ?? SET ?`;
-    connection.query(sql, [tabla, data], (error, result) => {
-      if (error) return reject(error);
-      resolve(result);
-    });
-  });
-}
-
-
-function actualizar(tabla, data) {
-  return new Promise((resolve, reject) => {
-    if (!connection) return reject('No hay conexión a la base de datos');
-    if (!data || !data.id) return reject('ID no proporcionado');
-
-    const sql = `UPDATE ?? SET ? WHERE id = ?`;
-    connection.query(sql, [tabla, data, data.id], (error, result) => {
-      if (error) return reject(error);
-      resolve(result);
-    });
-  });
-}
-
-
 function agregar(tabla, data) {
-  if (!data.id || data.id === 0) {
-    return insertar(tabla, data);
-  } else {
-    return actualizar(tabla, data);
-  }
+  return new Promise((resolve, reject) => {
+    if (!connection) return reject('No hay conexión a la base de datos');
+
+    const sql = `INSERT INTO ?? SET ? ON DUPLICATE KEY UPDATE ?`;
+
+    connection.query(sql, [tabla, data, data], (error, result) => {
+      if (error) {
+        console.error('❌ Error al insertar en la base de datos:', error);
+        return reject(error);
+      }
+
+      // Devuelve el insertId si se creó un nuevo registro
+      resolve(result);
+    });
+  });
 }
+
+
 
 function eliminar(tabla, data) {
   return new Promise((resolve, reject) => {
@@ -106,10 +90,22 @@ function eliminar(tabla, data) {
   });
 }
 
+function query(tabla, consulta) {
+  return new Promise((resolve, reject) => {
+    connection.query(`SELECT * FROM ${tabla} WHERE ?`, consulta, (error, result) => {
+      if (error) {
+        return reject(error);
+      } else {
+        resolve(result[0]);
+      }
+    });
+  });
+}
 
 module.exports = {
     todos,
     uno,
     agregar,
-    eliminar
+    eliminar,
+    query,
 }
